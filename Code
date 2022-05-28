@@ -1,0 +1,69 @@
+import random
+
+global generatedlock
+generatedlock=[]
+global trueFalseCount
+global trueTrueCount
+score = 100
+bitti = False
+
+def generatelock(level=3):
+    for i in range(level):
+        generatedlock.append(random.randint(0,9))
+
+def gethint(answer):
+    hint=[]
+    answer = [int(x) for x in str(answer)]
+    for i in range(len(answer)):
+        global generatedlock
+        if answer[i] in generatedlock:
+            hint.append(list([True]))
+        else:
+            hint.append(list([False]))
+        if answer[i] == generatedlock[i]:
+            hint[i].append(True)
+        else:
+            hint[i].append(False)
+    trueFalseCount = hint.count([True,False])
+    trueTrueCount = hint.count([True,True])
+    if trueTrueCount >= len(generatedlock):
+        global bitti
+        bitti = True
+        generatedlock = []
+    elif [True,True] in hint or [True,False] in hint:
+        if trueFalseCount == 1:
+            print(f"{trueFalseCount} rakam mevcut ama yeri yanlış")
+        if trueFalseCount > 1:
+            print(f"{trueFalseCount} rakam mevcut ama yeri yanlış")
+        if trueTrueCount == 1:
+            print(f"{trueTrueCount} rakam mevcut ve doğru yerde")
+        if trueTrueCount > 1:
+            print(f"{trueTrueCount} rakam mevcut ve doğru yerde")
+    else:
+        print("Hiç bir rakam eşleşmedi")
+
+while True:
+    bitti = False
+    seviye = int(input("Kaç haneli kilit çözmek istersiniz? "))
+    score = seviye**seviye*10
+    generatelock(seviye)
+    while bitti == False:
+        cevap = input("Tahminizi girin ")
+        if cevap == "p":
+            print("Kaybettiniz, şifre:", generatedlock)
+            bitti = True
+            generatedlock = []
+            break
+        gethint(cevap)
+        if bitti == False:
+            score -= seviye*2
+            if score > 0:    
+                print(f"Puanınız: {score} denemeye devam edin.")
+            else:
+                print("Puanınız sıfırın altına düştü, daha fazla uzatmayalım :( ")
+                generatedlock = []
+                break
+        if bitti == True:
+            print(f"Tebrikler, şifreyi çözdünüz. Puanınız: {score}")
+            generatedlock = []
+            break
